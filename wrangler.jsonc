@@ -1,0 +1,33 @@
+{
+  // Cloudflare Workers configuration.
+  //
+  // This site has no server-side code — it is a folder of static files. Setting
+  // "assets" without "main" tells Cloudflare to simply serve the contents of
+  // dist/ from its global network, which is what we want.
+  //
+  // Cloudflare runs `npm run build` (which fills dist/) and then
+  // `npx wrangler deploy`, which reads this file.
+
+  "$schema": "node_modules/wrangler/config-schema.json",
+
+  "name": "miranencheva-com",
+  "compatibility_date": "2026-09-10",
+
+  "assets": {
+    // Folder that build.mjs writes to.
+    "directory": "./dist",
+
+    // Serve /404.html (with a real 404 status) for any URL that doesn't exist,
+    // instead of Cloudflare's generic error page.
+    "not_found_handling": "404-page",
+
+    // Redirect /publications/index.html -> /publications/ so each page has one
+    // canonical URL. This matters for search ranking: duplicate URLs for the
+    // same content split the signals between them.
+    "html_handling": "auto-trailing-slash"
+  },
+
+  "observability": {
+    "enabled": true
+  }
+}
