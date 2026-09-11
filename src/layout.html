@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="{{lang}}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Core SEO ------------------------------------------------------- -->
+<title>{{title}}</title>
+<meta name="description" content="{{description}}">
+<link rel="canonical" href="{{canonical}}">
+<meta name="author" content="{{site_name}}">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+<!-- Social previews (Open Graph + Twitter/X) ------------------------ -->
+<meta property="og:type" content="profile">
+<meta property="og:site_name" content="{{site_name}}">
+<meta property="og:title" content="{{title}}">
+<meta property="og:description" content="{{description}}">
+<meta property="og:url" content="{{canonical}}">
+<meta property="og:image" content="{{social_image}}">
+<meta property="og:image:alt" content="Portrait of {{site_name}}">
+<meta property="og:locale" content="en_US">
+<meta property="profile:first_name" content="Mira">
+<meta property="profile:last_name" content="Nencheva">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{title}}">
+<meta name="twitter:description" content="{{description}}">
+<meta name="twitter:image" content="{{social_image}}">
+
+<!-- Google Scholar / Zotero citation metadata ----------------------- -->
+<meta name="citation_author" content="Nencheva, Mira L.">
+<meta name="citation_author_institution" content="Stanford University">
+
+<!-- Structured data: this is what tells Google that this site is the
+     canonical home of the person "Mira Nencheva". ------------------- -->
+<script type="application/ld+json">{{json_ld}}</script>
+
+<!-- Icons ---------------------------------------------------------- -->
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#8c1515">
+
+<!-- Styles are inlined at build time: no render-blocking request. --->
+<style>{{css}}</style>
+</head>
+
+<body class="{{body_class}}">
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="/">
+      <span class="brand-name">Mira Nencheva</span>
+      <span class="brand-role">Stanford University</span>
+    </a>
+    <nav class="site-nav" aria-label="Primary">
+      <ul>
+        {{nav}}
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+{{content}}
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-links">
+      <a href="mailto:{{email}}">{{email}}</a>
+      <a href="{{scholar}}" rel="me noopener">Google Scholar</a>
+      <a href="/cv/">CV</a>
+    </div>
+    <p class="footer-meta">
+      &copy; {{year}} Mira Nencheva · Stanford, California · Last updated {{updated}}
+    </p>
+  </div>
+</footer>
+</body>
+</html>

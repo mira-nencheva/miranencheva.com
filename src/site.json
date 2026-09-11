@@ -1,0 +1,58 @@
+{
+  "_comment": "Site-wide settings. Anything here is available to every page. Edit freely — the build reads this file every time.",
+
+  "name": "Mira Nencheva",
+  "givenName": "Mira",
+  "familyName": "Nencheva",
+  "alternateNames": ["Mira L. Nencheva", "Mira Nencheva", "M. L. Nencheva"],
+  "url": "https://miranencheva.com",
+  "email": "miran@stanford.edu",
+  "photo": "mira-nencheva",
+
+  "jobTitle": "Postdoctoral Fellow in Psychology",
+  "description": "Postdoctoral fellow in psychology at Stanford University studying how emotion and language develop together in infancy and early childhood.",
+
+  "affiliation": {
+    "name": "Stanford University",
+    "url": "https://www.stanford.edu/"
+  },
+  "lab": {
+    "name": "Language and Cognition Lab, Stanford University",
+    "url": "https://langcog.stanford.edu/"
+  },
+  "alumniOf": [
+    { "name": "Princeton University", "url": "https://www.princeton.edu/" },
+    { "name": "Dartmouth College", "url": "https://home.dartmouth.edu/" },
+    { "name": "Stanford University", "url": "https://www.stanford.edu/" }
+  ],
+
+  "knowsAbout": [
+    "developmental psychology",
+    "emotion development",
+    "language development",
+    "affective science",
+    "infant-directed speech",
+    "word learning",
+    "caregiver-child interaction",
+    "naturalistic behavioral data",
+    "functional near-infrared spectroscopy",
+    "computational social science"
+  ],
+
+  "_profiles_note": "These become schema.org sameAs links, which is how Google connects your website to your other scholarly identities. Fill in any that are blank and delete the ones you don't use.",
+  "profiles": {
+    "scholar": "https://scholar.google.com/citations?user=MutwDoMAAAAJ&hl=en",
+    "orcid": "",
+    "osf": "",
+    "github": "",
+    "bluesky": "",
+    "linkedin": ""
+  },
+
+  "nav": [
+    { "slug": "", "label": "About" },
+    { "slug": "publications", "label": "Publications" },
+    { "slug": "teaching", "label": "Teaching & Service" },
+    { "slug": "cv", "label": "CV" }
+  ]
+}

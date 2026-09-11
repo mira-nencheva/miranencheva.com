@@ -1,0 +1,105 @@
+# Runs on every push and pull request.
+#
+# Cloudflare Pages does its OWN build and deploy (connected directly to this
+# repo), so this workflow does not deploy anything. Its job is to catch
+# mistakes BEFORE they reach the live site: if the build breaks or a link is
+# dead, you get a red X on the commit.
+
+name: Build & check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build site and validate output
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci || npm install
+
+      - name: Build
+        run: npm run build
+
+      - name: Check required files exist
+        run: |
+          set -e
+          for f in dist/index.html dist/research/index.html \
+                   dist/publications/index.html dist/teaching/index.html \
+                   dist/cv/index.html dist/404.html \
+                   dist/sitemap.xml dist/robots.txt dist/_headers dist/_redirects; do
+            if [ ! -s "$f" ]; then echo "::error::missing or empty: $f"; exit 1; fi
+          done
+          echo "All expected files present."
+
+      - name: Validate structured data is parseable JSON
+        run: |
+          node -e '
+            const fs = require("fs");
+            const files = ["dist/index.html","dist/research/index.html",
+                           "dist/publications/index.html","dist/teaching/index.html",
+                           "dist/cv/index.html"];
+            let bad = 0;
+            for (const f of files) {
+              const html = fs.readFileSync(f, "utf8");
+              const m = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
+              if (!m) { console.error(`::error::no JSON-LD in ${f}`); bad++; continue; }
+              try { JSON.parse(m[1]); } catch (e) {
+                console.error(`::error::invalid JSON-LD in ${f}: ${e.message}`); bad++;
+              }
+            }
+            if (bad) process.exit(1);
+            console.log("JSON-LD valid in all pages.");
+          '
+
+      - name: Check for broken internal links
+        run: |
+          node -e '
+            const fs = require("fs"), path = require("path");
+            const root = "dist";
+            const pages = [];
+            (function walk(d){ for (const e of fs.readdirSync(d,{withFileTypes:true})) {
+              const p = path.join(d,e.name);
+              if (e.isDirectory()) walk(p); else if (p.endsWith(".html")) pages.push(p);
+            }})(root);
+
+            const exists = (href) => {
+              const clean = href.split("#")[0].split("?")[0];
+              if (!clean || clean === "/") return fs.existsSync("dist/index.html");
+              const base = path.join(root, clean);
+              return fs.existsSync(base)
+                  || fs.existsSync(base + ".html")
+                  || fs.existsSync(path.join(base, "index.html"));
+            };
+
+            let broken = 0;
+            for (const p of pages) {
+              const html = fs.readFileSync(p, "utf8");
+              for (const m of html.matchAll(/(?:href|src)="(\/[^"]*)"/g)) {
+                if (!exists(m[1])) { console.error(`::error file=${p}::broken link ${m[1]}`); broken++; }
+              }
+            }
+            if (broken) process.exit(1);
+            console.log(`Checked ${pages.length} pages, no broken internal links.`);
+          '
+
+      - name: Report page weight
+        run: |
+          echo "### Page sizes" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          find dist -name '*.html' -printf '%s\t%p\n' | sort -rn | \
+            awk '{printf "%6.1f KB  %s\n", $1/1024, $2}' >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY

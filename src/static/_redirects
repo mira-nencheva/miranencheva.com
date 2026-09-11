@@ -1,0 +1,21 @@
+# Cloudflare Pages redirect rules. One per line: FROM  TO  STATUS
+# 301 = permanent, which is what passes SEO value from the old URL to the new one.
+
+# Old WordPress.com paths -> new equivalents
+/home                /            301
+/about               /            301
+/about-me            /            301
+/blog                /            301
+/blog/*              /            301
+/feed                /            301
+/feed/*              /            301
+/comments/feed       /            301
+/wp-admin/*          /            301
+/wp-login.php        /            301
+/?page_id=:id        /            301
+
+# Friendly short URLs
+/cv.pdf              /cv/Mira-Nencheva-CV.pdf   301
+/scholar             https://scholar.google.com/citations?user=MutwDoMAAAAJ&hl=en  302
+/publications.html   /publications/             301
+/research.html       /research/                 301
