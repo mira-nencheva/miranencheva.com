@@ -1,9 +1,9 @@
 # Runs on every push and pull request.
 #
-# Cloudflare Pages does its OWN build and deploy (connected directly to this
-# repo), so this workflow does not deploy anything. Its job is to catch
-# mistakes BEFORE they reach the live site: if the build breaks or a link is
-# dead, you get a red X on the commit.
+# Cloudflare does its OWN build and deploy (connected directly to this repo),
+# so this workflow does not deploy anything. Its job is to catch mistakes
+# BEFORE they reach the live site: if the build breaks or a link is dead, you
+# get a red X on the commit.
 
 name: Build & check
 
@@ -21,11 +21,11 @@ jobs:
     name: Build site and validate output
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
-          node-version: '20'
+          node-version-file: '.node-version'
           cache: npm
 
       - name: Install dependencies
@@ -34,24 +34,90 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Check required files exist
+      - name: Check every source page produced an output file
         run: |
-          set -e
-          for f in dist/index.html dist/research/index.html \
-                   dist/publications/index.html dist/teaching/index.html \
-                   dist/cv/index.html dist/404.html \
-                   dist/sitemap.xml dist/robots.txt dist/_headers dist/_redirects; do
-            if [ ! -s "$f" ]; then echo "::error::missing or empty: $f"; exit 1; fi
-          done
-          echo "All expected files present."
+          node -e '
+            const fs = require("fs"), path = require("path");
+
+            // Work out what SHOULD exist by reading the slug from each page
+            // source, rather than hardcoding a list. Adding or removing a page
+            // then needs no change here.
+            const expected = fs.readdirSync("src/pages")
+              .filter((f) => f.endsWith(".html"))
+              .map((f) => {
+                const src = fs.readFileSync(path.join("src/pages", f), "utf8");
+                const fm = src.match(/^<!--\s*([\s\S]*?)\s*-->/);
+                if (!fm) throw new Error(`${f} has no front-matter block`);
+                const { slug } = JSON.parse(fm[1]);
+                if (slug === "") return "dist/index.html";
+                if (slug === "404") return "dist/404.html";
+                return `dist/${slug}/index.html`;
+              });
+
+            // Files the build always emits, plus anything in src/static.
+            const always = ["dist/sitemap.xml", "dist/robots.txt"];
+            const statics = fs.existsSync("src/static")
+              ? fs.readdirSync("src/static", { recursive: true })
+                  .filter((f) => fs.statSync(path.join("src/static", f)).isFile())
+                  .map((f) => path.join("dist", f))
+              : [];
+
+            const missing = [...expected, ...always, ...statics]
+              .filter((f) => !fs.existsSync(f) || fs.statSync(f).size === 0);
+
+            if (missing.length) {
+              for (const f of missing) console.error(`::error::missing or empty: ${f}`);
+              process.exit(1);
+            }
+            console.log(`${expected.length} pages + ${always.length + statics.length} other files, all present.`);
+          '
+
+      - name: Check redirect rules can't loop
+        run: |
+          node -e '
+            const fs = require("fs");
+            const file = "dist/_redirects";
+            if (!fs.existsSync(file)) { console.log("no _redirects file"); process.exit(0); }
+
+            let bad = 0;
+            const lines = fs.readFileSync(file, "utf8").split("\n");
+            lines.forEach((raw, i) => {
+              const line = raw.trim();
+              if (!line || line.startsWith("#")) return;
+              const [from, to] = line.split(/\s+/);
+              if (!from || !to) return;
+
+              // A rule pointing a path at itself is an infinite redirect loop.
+              // Query strings are not matched, so "/?foo=1" collapses to "/".
+              const fromPath = from.split("?")[0];
+              if (fromPath === to) {
+                console.error(`::error file=src/static/_redirects,line=${i + 1}::redirect loop: "${from}" -> "${to}"`);
+                bad++;
+              }
+              if (from.includes("?")) {
+                console.error(`::error file=src/static/_redirects,line=${i + 1}::query strings are not matched in _redirects; "${from}" is treated as "${fromPath}"`);
+                bad++;
+              }
+            });
+            if (bad) process.exit(1);
+            console.log("Redirect rules OK — no self-referential rules.");
+          '
 
       - name: Validate structured data is parseable JSON
         run: |
           node -e '
-            const fs = require("fs");
-            const files = ["dist/index.html","dist/research/index.html",
-                           "dist/publications/index.html","dist/teaching/index.html",
-                           "dist/cv/index.html"];
+            const fs = require("fs"), path = require("path");
+
+            // Every built HTML page, found by walking dist/ — no fixed list.
+            const files = [];
+            (function walk(d) {
+              for (const e of fs.readdirSync(d, { withFileTypes: true })) {
+                const p = path.join(d, e.name);
+                if (e.isDirectory()) walk(p);
+                else if (p.endsWith(".html")) files.push(p);
+              }
+            })("dist");
+
             let bad = 0;
             for (const f of files) {
               const html = fs.readFileSync(f, "utf8");
@@ -62,7 +128,7 @@ jobs:
               }
             }
             if (bad) process.exit(1);
-            console.log("JSON-LD valid in all pages.");
+            console.log(`JSON-LD valid in all ${files.length} pages.`);
           '
 
       - name: Check for broken internal links
