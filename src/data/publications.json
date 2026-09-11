@@ -13,8 +13,7 @@
     "volume": "29",
     "issue": "1",
     "pages": "e70083",
-    "doi": "",
-    "_todo": "DOI not yet verified — open the article and paste the DOI (looks like 10.1111/desc.XXXXX) into the doi field above.",
+    "doi": "10.1111/desc.70083",
     "highlight": true
   },
   {
@@ -54,8 +53,7 @@
     "volume": "28",
     "issue": "1",
     "pages": "e13581",
-    "doi": "",
-    "_todo": "DOI not yet verified — paste it in above.",
+    "doi": "10.1111/desc.13581",
     "highlight": false
   },
   {
@@ -71,9 +69,8 @@
     "venue": "Open Mind",
     "volume": "8",
     "pages": "1330-1347",
-    "doi": "",
+    "doi": "10.1162/opmi_a_00172",
     "preprint": "https://doi.org/10.31234/osf.io/jgmp3",
-    "_todo": "Journal DOI not yet verified (Open Mind DOIs look like 10.1162/opmi_a_00XXX). Preprint link is live in the meantime.",
     "highlight": false
   },
   {
@@ -230,7 +227,8 @@
       "Lew-Williams, C."
     ],
     "venue": "",
-    "status": "Under review."
+    "status": "Under review.",
+    "hidden": true
   },
   {
     "type": "inprep",
@@ -241,7 +239,8 @@
       "Frank, M. C."
     ],
     "venue": "",
-    "status": "Under review."
+    "status": "Under review.",
+    "hidden": true
   },
   {
     "type": "inprep",
@@ -252,7 +251,8 @@
       "Frank, M. C."
     ],
     "venue": "",
-    "status": "In preparation."
+    "status": "In preparation.",
+    "hidden": true
   },
   {
     "type": "inprep",
@@ -265,7 +265,8 @@
       "Gotlib, I. H."
     ],
     "venue": "",
-    "status": "In preparation."
+    "status": "In preparation.",
+    "hidden": true
   },
   {
     "type": "inprep",
@@ -277,6 +278,7 @@
       "Lew-Williams, C."
     ],
     "venue": "",
-    "status": "In preparation."
+    "status": "In preparation.",
+    "hidden": true
   }
 ]

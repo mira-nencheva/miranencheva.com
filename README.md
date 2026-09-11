@@ -8,15 +8,19 @@ getting this online from scratch.
 
 ---
 
-## Things to do before launch
+## Still to do
 
-- [ ] Replace `src/images/mira-nencheva.jpg` with your real photo (same filename)
-- [ ] Fill in the four empty `"doi"` fields in `src/data/publications.json`
-      (each is marked with a `"_todo"` note; delete the note once filled)
-- [ ] Add your ORCID / OSF / Bluesky links in `src/site.json` → `profiles`
-- [ ] Read through the copy on the About and Research pages — I drafted it from
-      your research statement, so it should sound like you, but it's your voice
-      and you should be happy with every sentence
+- [ ] Submit the site to Google Search Console (see SETUP-GUIDE.md §6a)
+- [ ] Add the link to your Stanford profile page, Google Scholar homepage
+      field, and lab pages — the single biggest thing for ranking
+- [ ] Optional: add OSF / Bluesky / LinkedIn links in `src/site.json` → `profiles`
+
+### Hidden publications
+
+Your five under-review and in-preparation manuscripts are still in
+`src/data/publications.json` but carry `"hidden": true`, so they don't appear on
+the site. To bring one back, delete that line from its entry and push. The build
+prints a reminder of how many are hidden each time it runs.
 
 ---
 
@@ -82,8 +86,9 @@ matter — the build sorts by year. Minimum viable entry:
 | `venue`, `volume`, `issue`, `pages` | Optional, formatted for you |
 | `doi` | Makes the title a link and generates structured data for Google |
 | `pdf`, `osf`, `preprint` | Optional extra links |
-| `note` | One-line plain-English summary. Shown under the citation. |
+| `status` | Short label like `"In press."` or `"Under review."` Shown under the citation. |
 | `highlight` | `true` puts it in the "Recent papers" list on the homepage |
+| `hidden` | `true` keeps the entry in this file but leaves it off the site |
 
 The `note` field is worth using on your best papers — it's readable text that
 both humans and search engines can understand, unlike a bare citation.

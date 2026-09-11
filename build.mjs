@@ -56,9 +56,15 @@ const log = (...a) => console.log('  ', ...a);
  * ------------------------------------------------------------------ */
 
 const site = JSON.parse(await fs.readFile(path.join(SRC, 'site.json'), 'utf8'));
-const publications = JSON.parse(
+
+// Entries marked "hidden": true stay in publications.json but are not rendered
+// anywhere — handy for manuscripts that aren't public yet. Delete the flag to
+// bring one back.
+const allPublications = JSON.parse(
   await fs.readFile(path.join(SRC, 'data', 'publications.json'), 'utf8')
 );
+const publications = allPublications.filter((p) => !p.hidden);
+const hiddenCount = allPublications.length - publications.length;
 const layout = await fs.readFile(path.join(SRC, 'layout.html'), 'utf8');
 
 const BUILD_DATE = new Date().toISOString().slice(0, 10);
@@ -548,6 +554,10 @@ async function build() {
 
   await copyDir(path.join(SRC, 'static'), OUT);
   await writeSitemap();
+
+  if (hiddenCount) {
+    log(`note   ${hiddenCount} publication(s) hidden — remove "hidden": true in publications.json to show them`);
+  }
 
   console.log(`\nDone in ${Date.now() - started}ms → dist/\n`);
 }

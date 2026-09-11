@@ -42,7 +42,7 @@
   "_profiles_note": "These become schema.org sameAs links, which is how Google connects your website to your other scholarly identities. Fill in any that are blank and delete the ones you don't use.",
   "profiles": {
     "scholar": "https://scholar.google.com/citations?user=MutwDoMAAAAJ&hl=en",
-    "orcid": "",
+    "orcid": "https://orcid.org/0000-0003-4854-4608",
     "osf": "",
     "github": "",
     "bluesky": "",
